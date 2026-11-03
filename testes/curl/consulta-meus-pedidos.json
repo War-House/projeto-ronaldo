@@ -1,0 +1,1 @@
+{ "operationName": "MeusPedidos", "query": "query MeusPedidos { resumoPedidos { total alugueisAtivos valorTotal } meusPedidos { id tipo status valorTotal itens { quantidade jogo { nome categoria jogadores } } } sugestoes: jogos(categoria: ESTRATEGIA, apenasDisponiveis: true, limite: 3) { nome precoAluguelDia } }" }

@@ -1,0 +1,1 @@
+{ "operationName": "NovoPedido", "query": "mutation NovoPedido($dados: NovoPedidoInput!) { criarPedido(dados: $dados) { id tipo status valorTotal itens { quantidade jogo { nome } } } }", "variables": { "dados": { "tipo": "COMPRA", "email": "marina@exemplo.test", "itens": [{ "jogoId": "6", "quantidade": 1 }] } } }

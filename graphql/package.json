@@ -1,0 +1,18 @@
+{
+  "name": "warhouse-graphql",
+  "version": "1.0.0",
+  "description": "Parte 3 - Servidor GraphQL do WarHouse (dados vindos da API REST)",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@apollo/server": "^5.0.0",
+    "dataloader": "^2.2.3",
+    "graphql": "^16.11.0"
+  }
+}
