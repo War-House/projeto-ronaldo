@@ -1,0 +1,10 @@
+{
+  "name": "arquitetura-de-software-grupo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "rabbit:up": "docker compose up -d",
+    "rabbit:down": "docker compose down",
+    "rabbit:check": "node scripts/rabbit-check.mjs"
+  }
+}

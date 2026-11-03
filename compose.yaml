@@ -1,0 +1,10 @@
+# RabbitMQ para os tutoriais de Mensageria.
+# Usuário e senha padrão: guest / guest (somente para estudo).
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"     # protocolo AMQP (usado pelo código)
+      - "15672:15672"   # painel web de administração
