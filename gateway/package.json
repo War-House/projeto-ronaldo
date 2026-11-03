@@ -1,0 +1,17 @@
+{
+  "name": "warhouse-gateway",
+  "version": "1.0.0",
+  "description": "Parte 4 - API Gateway do WarHouse (ponto único de entrada)",
+  "type": "module",
+  "scripts": {
+    "start": "node gateway.js",
+    "dev": "node --watch gateway.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "express": "^5.2.0"
+  }
+}
