@@ -1,0 +1,388 @@
+openapi: 3.1.1   # a 3.2.0 é a mais recente; usamos 3.1.1 por compatibilidade com o Swagger UI/Editor
+info:
+  title: API do WarHouse
+  version: 1.0.0
+  summary: Catálogo de jogos de tabuleiro e pedidos de aluguel ou compra.
+  description: |
+    API REST do WarHouse (Parte 1). O acesso público é sempre pelo API Gateway, em
+    `http://localhost:3000/api`, com o cabeçalho `X-API-Key`. A API em si ouve só em 127.0.0.1:3001
+    e recebe do gateway a identidade do cliente (`X-Cliente-Id`, `X-Cliente-Perfil`) e o `X-Request-Id`.
+
+    Erros seguem a RFC 9457 (Problem Details), com `Content-Type: application/problem+json`.
+
+    Regras de negócio: R1 estoque insuficiente (409), R2 aluguel no passado (422), R3 aluguel de 1 a 30
+    dias (422), R4 jogo com histórico não é excluído (409), R5 transição de status inválida (409),
+    R6 no máximo 3 aluguéis ativos por e-mail (409), R7 só ADMIN altera o catálogo (403).
+servers:
+  - url: http://localhost:3000/api
+    description: Pelo API Gateway (único ponto de entrada público)
+  - url: http://127.0.0.1:3001
+    description: Direto na API (só da própria máquina, para desenvolvimento)
+security:
+  - chaveApi: []
+tags:
+  - name: jogos
+    description: Catálogo de jogos de tabuleiro (CRUD completo)
+  - name: pedidos
+    description: Pedidos de aluguel ou compra
+
+paths:
+  /jogos:
+    get:
+      tags: [jogos]
+      summary: Lista os jogos com filtros, ordenação e paginação
+      operationId: listarJogos
+      parameters:
+        - { name: categoria, in: query, schema: { $ref: '#/components/schemas/Categoria' } }
+        - { name: busca, in: query, description: 'Parte do nome, sem diferenciar maiúsculas', schema: { type: string } }
+        - { name: disponivel, in: query, schema: { type: boolean } }
+        - { name: ids, in: query, description: 'Lista de ids separados por vírgula (ex.: 1,3,8). Usado pelo DataLoader do GraphQL.', schema: { type: string, example: '1,3,8' } }
+        - { name: ordenar, in: query, schema: { type: string, enum: [id, nome, precoVenda, precoAluguelDia, exemplaresDisponiveis], default: id } }
+        - { name: ordem, in: query, schema: { type: string, enum: [asc, desc], default: asc } }
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de jogos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dados: { type: array, items: { $ref: '#/components/schemas/Jogo' } }
+                  paginacao: { $ref: '#/components/schemas/Paginacao' }
+        '400': { $ref: '#/components/responses/ParametroInvalido' }
+    post:
+      tags: [jogos]
+      summary: Cadastra um jogo (somente perfil ADMIN)
+      operationId: criarJogo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JogoEntrada' }
+            example: { nome: Carcassonne, categoria: FAMILIA, minJogadores: 2, maxJogadores: 5, idadeMinima: 7, precoVenda: 239.9, precoAluguelDia: 13.9, exemplaresDisponiveis: 2 }
+      responses:
+        '201':
+          description: Jogo criado
+          headers:
+            Location: { description: Endereço do jogo criado, schema: { type: string, example: /api/jogos/9 } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Jogo' }
+        '400': { $ref: '#/components/responses/JsonInvalido' }
+        '401': { $ref: '#/components/responses/NaoAutenticado' }
+        '403': { $ref: '#/components/responses/Proibido' }
+        '409': { $ref: '#/components/responses/Conflito' }
+        '422': { $ref: '#/components/responses/DadosInvalidos' }
+
+  /jogos/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [jogos]
+      summary: Busca um jogo pelo id
+      operationId: buscarJogo
+      responses:
+        '200':
+          description: O jogo encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Jogo' }
+        '400': { $ref: '#/components/responses/ParametroInvalido' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    put:
+      tags: [jogos]
+      summary: Substitui o jogo inteiro (somente ADMIN)
+      operationId: substituirJogo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JogoEntrada' }
+      responses:
+        '200':
+          description: O jogo como ficou
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Jogo' }
+        '403': { $ref: '#/components/responses/Proibido' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+        '422': { $ref: '#/components/responses/DadosInvalidos' }
+    patch:
+      tags: [jogos]
+      summary: Altera só os campos enviados (somente ADMIN)
+      operationId: alterarJogo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JogoParcial' }
+            example: { exemplaresDisponiveis: 0 }
+      responses:
+        '200':
+          description: O jogo como ficou
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Jogo' }
+        '403': { $ref: '#/components/responses/Proibido' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+        '422': { $ref: '#/components/responses/DadosInvalidos' }
+    delete:
+      tags: [jogos]
+      summary: Remove um jogo (somente ADMIN; R4 impede se houver pedidos)
+      operationId: removerJogo
+      responses:
+        '204': { description: 'Removido, sem corpo' }
+        '403': { $ref: '#/components/responses/Proibido' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflito' }
+
+  /pedidos:
+    get:
+      tags: [pedidos]
+      summary: Lista os pedidos do cliente (o ADMIN vê todos)
+      operationId: listarPedidos
+      parameters:
+        - { name: status, in: query, schema: { $ref: '#/components/schemas/StatusPedido' } }
+        - { name: tipo, in: query, schema: { $ref: '#/components/schemas/TipoPedido' } }
+        - { name: ordem, in: query, schema: { type: string, enum: [asc, desc], default: desc } }
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de pedidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dados: { type: array, items: { $ref: '#/components/schemas/Pedido' } }
+                  paginacao: { $ref: '#/components/schemas/Paginacao' }
+        '400': { $ref: '#/components/responses/ParametroInvalido' }
+        '401': { $ref: '#/components/responses/NaoAutenticado' }
+    post:
+      tags: [pedidos]
+      summary: Cria um pedido de aluguel ou compra (publica o evento pedido.<tipo>.criado)
+      description: |
+        Reserva os exemplares e responde 201 na hora. O evento vai para a outbox e é publicado no
+        RabbitMQ (exchange `warhouse.eventos`) sem que o cliente espere os consumidores.
+      operationId: criarPedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PedidoEntrada' }
+            examples:
+              aluguel: { value: { tipo: ALUGUEL, email: marina@exemplo.test, dataInicio: '2027-02-01', dias: 3, itens: [{ jogoId: 7, quantidade: 1 }] } }
+              compra: { value: { tipo: COMPRA, email: marina@exemplo.test, itens: [{ jogoId: 3, quantidade: 2 }] } }
+      responses:
+        '201':
+          description: Pedido criado
+          headers:
+            Location: { description: Endereço do pedido criado, schema: { type: string, example: /api/pedidos/4 } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Pedido' }
+        '400': { $ref: '#/components/responses/JsonInvalido' }
+        '401': { $ref: '#/components/responses/NaoAutenticado' }
+        '409': { $ref: '#/components/responses/Conflito' }
+        '422': { $ref: '#/components/responses/DadosInvalidos' }
+
+  /pedidos/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [pedidos]
+      summary: Busca um pedido (404 se for de outro cliente)
+      operationId: buscarPedido
+      responses:
+        '200':
+          description: O pedido
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Pedido' }
+        '401': { $ref: '#/components/responses/NaoAutenticado' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    patch:
+      tags: [pedidos]
+      summary: Muda o status (o cliente só pode cancelar; as demais etapas são do ADMIN)
+      operationId: mudarStatusPedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { $ref: '#/components/schemas/StatusPedido' }
+            example: { status: CANCELADO }
+      responses:
+        '200':
+          description: O pedido como ficou
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Pedido' }
+        '403': { $ref: '#/components/responses/Proibido' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflito' }
+        '422': { $ref: '#/components/responses/DadosInvalidos' }
+
+components:
+  securitySchemes:
+    chaveApi:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: 'Chaves fictícias: chave-app-cliente-123, chave-painel-admin-456, chave-parceiro-ludoteca-789'
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, minimum: 1 }
+    Pagina:
+      name: pagina
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    Limite:
+      name: limite
+      in: query
+      description: Itens por página (teto de 50)
+      schema: { type: integer, minimum: 1, maximum: 50, default: 10 }
+
+  schemas:
+    Categoria:
+      type: string
+      enum: [ESTRATEGIA, FAMILIA, PARTY, COOPERATIVO, CARTAS]
+    TipoPedido:
+      type: string
+      enum: [ALUGUEL, COMPRA]
+    StatusPedido:
+      type: string
+      enum: [CRIADO, PAGO, ENVIADO, CONCLUIDO, CANCELADO]
+    JogoEntrada:
+      type: object
+      required: [nome, categoria, minJogadores, maxJogadores, idadeMinima, precoVenda, precoAluguelDia, exemplaresDisponiveis]
+      properties:
+        nome: { type: string, minLength: 2, maxLength: 80 }
+        categoria: { $ref: '#/components/schemas/Categoria' }
+        minJogadores: { type: integer, minimum: 1, maximum: 20 }
+        maxJogadores: { type: integer, minimum: 1, maximum: 20, description: Maior ou igual a minJogadores }
+        idadeMinima: { type: integer, minimum: 0, maximum: 18 }
+        precoVenda: { type: number, exclusiveMinimum: 0 }
+        precoAluguelDia: { type: number, exclusiveMinimum: 0, description: Menor que precoVenda }
+        exemplaresDisponiveis: { type: integer, minimum: 0, maximum: 1000 }
+    JogoParcial:
+      type: object
+      description: Qualquer subconjunto dos campos de JogoEntrada
+      properties:
+        nome: { type: string }
+        categoria: { $ref: '#/components/schemas/Categoria' }
+        minJogadores: { type: integer }
+        maxJogadores: { type: integer }
+        idadeMinima: { type: integer }
+        precoVenda: { type: number }
+        precoAluguelDia: { type: number }
+        exemplaresDisponiveis: { type: integer }
+    Jogo:
+      allOf:
+        - type: object
+          required: [id, disponivel]
+          properties:
+            id: { type: integer }
+            disponivel: { type: boolean, description: exemplaresDisponiveis > 0 }
+        - $ref: '#/components/schemas/JogoEntrada'
+    ItemPedido:
+      type: object
+      required: [jogoId, quantidade]
+      properties:
+        jogoId: { type: integer, minimum: 1 }
+        quantidade: { type: integer, minimum: 1, maximum: 5 }
+    PedidoEntrada:
+      type: object
+      required: [tipo, email, itens]
+      properties:
+        tipo: { $ref: '#/components/schemas/TipoPedido' }
+        email: { type: string, format: email, description: Usado nas notificações; não volta nas respostas (LGPD) }
+        itens: { type: array, minItems: 1, maxItems: 10, items: { $ref: '#/components/schemas/ItemPedido' } }
+        dataInicio: { type: string, format: date, description: 'Obrigatório no ALUGUEL; não pode estar no passado (UTC)' }
+        dias: { type: integer, minimum: 1, maximum: 30, description: Obrigatório no ALUGUEL }
+    Pedido:
+      type: object
+      properties:
+        id: { type: integer }
+        clienteId: { type: string, example: app-cliente }
+        tipo: { $ref: '#/components/schemas/TipoPedido' }
+        status: { $ref: '#/components/schemas/StatusPedido' }
+        itens: { type: array, items: { $ref: '#/components/schemas/ItemPedido' } }
+        dataInicio: { type: [string, 'null'], format: date }
+        dataFim: { type: [string, 'null'], format: date }
+        dias: { type: [integer, 'null'] }
+        valorTotal: { type: number }
+        criadoEm: { type: string, format: date-time, description: UTC }
+        atualizadoEm: { type: string, format: date-time, description: UTC }
+    Paginacao:
+      type: object
+      properties:
+        pagina: { type: integer }
+        limite: { type: integer }
+        total: { type: integer }
+        totalPaginas: { type: integer }
+    Problema:
+      type: object
+      description: Problem Details (RFC 9457)
+      properties:
+        type: { type: string, example: 'https://warhouse.example/problemas/estoque-insuficiente' }
+        title: { type: string, example: Estoque insuficiente }
+        status: { type: integer, example: 409 }
+        detail: { type: string }
+        instance: { type: string, example: /pedidos }
+        requestId: { type: string, description: X-Request-Id da requisição }
+        erros:
+          type: array
+          description: Só nos erros de validação (422)
+          items:
+            type: object
+            properties:
+              campo: { type: string }
+              mensagem: { type: string }
+
+  responses:
+    ParametroInvalido:
+      description: Parâmetro ou identificador inválido
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problema' }
+    JsonInvalido:
+      description: O corpo não é um JSON válido
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problema' }
+    NaoAutenticado:
+      description: Sem chave de API válida (gateway) ou sem identidade (serviço)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problema' }
+    Proibido:
+      description: "Cliente conhecido, mas sem permissão (ex.: app do cliente alterando o catálogo)"
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problema' }
+    NaoEncontrado:
+      description: Recurso não encontrado (ou de outro cliente)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problema' }
+    Conflito:
+      description: Regra de negócio violada (estoque, histórico, transição de status, limite de aluguéis, nome duplicado)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problema' }
+    DadosInvalidos:
+      description: JSON válido, mas com dados inválidos (lista em "erros") ou regra de data/período
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problema' }

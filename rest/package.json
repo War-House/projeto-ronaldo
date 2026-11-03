@@ -1,0 +1,20 @@
+{
+  "name": "warhouse-rest",
+  "version": "1.0.0",
+  "description": "Parte 1 - API REST do WarHouse (catálogo de jogos de tabuleiro e pedidos de aluguel/compra)",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "cliente": "node cliente.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.9",
+    "express": "^5.2.0"
+  }
+}

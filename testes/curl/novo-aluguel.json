@@ -1,0 +1,1 @@
+{ "tipo": "ALUGUEL", "email": "marina@exemplo.test", "dataInicio": "2027-02-01", "dias": 3, "itens": [{ "jogoId": 7, "quantidade": 1 }] }
