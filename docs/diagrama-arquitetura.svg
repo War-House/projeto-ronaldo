@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 610" font-family="Inter, Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3b4a5a"/></marker>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker>
+    <style>
+      .t{font-size:13px;font-weight:700;fill:#14202c}
+      .d{font-size:10.5px;fill:#44525f}
+      .l{font-size:10px;fill:#3b4a5a}
+      .la{font-size:10px;fill:#c2410c}
+      .sync{stroke:#3b4a5a;stroke-width:1.6;fill:none}
+      .async{stroke:#c2410c;stroke-width:1.6;fill:none;stroke-dasharray:6 4}
+    </style>
+  </defs>
+
+  <!-- Clientes -->
+  <g>
+    <rect x="120" y="12" width="210" height="52" rx="8" fill="#fdecdf" stroke="#e07a3a"/>
+    <text x="225" y="34" text-anchor="middle" class="t">App do cliente</text>
+    <text x="225" y="51" text-anchor="middle" class="d">app-cliente · CLIENTE · 30/min</text>
+    <rect x="375" y="12" width="210" height="52" rx="8" fill="#fdecdf" stroke="#e07a3a"/>
+    <text x="480" y="34" text-anchor="middle" class="t">Painel administrativo</text>
+    <text x="480" y="51" text-anchor="middle" class="d">painel-admin · ADMIN · 120/min</text>
+    <rect x="630" y="12" width="210" height="52" rx="8" fill="#fdecdf" stroke="#e07a3a"/>
+    <text x="735" y="34" text-anchor="middle" class="t">Ludoteca parceira</text>
+    <text x="735" y="51" text-anchor="middle" class="d">parceiro-ludoteca · 10/min</text>
+  </g>
+  <path class="sync" d="M225,64 L300,108" marker-end="url(#s)"/>
+  <path class="sync" d="M480,64 L480,108" marker-end="url(#s)"/>
+  <path class="sync" d="M735,64 L660,108" marker-end="url(#s)"/>
+  <text x="492" y="90" class="l">HTTP + X-API-Key</text>
+
+  <!-- Gateway -->
+  <rect x="170" y="110" width="620" height="66" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="480" y="132" text-anchor="middle" class="t">API Gateway · :3000 (única porta pública)</text>
+  <text x="480" y="149" text-anchor="middle" class="d">X-Request-Id · chave de API (401) · autorização por rota (403) · limite por plano (429)</text>
+  <text x="480" y="164" text-anchor="middle" class="d">timeout (504) · fora do ar (502) · disjuntor (503) · rota agregada /api/painel/pedidos/:id</text>
+
+  <!-- Rede interna -->
+  <rect x="14" y="196" width="932" height="404" rx="12" fill="none" stroke="#94a3b8" stroke-dasharray="7 5"/>
+  <text x="930" y="592" text-anchor="end" class="d">Rede interna: serviços ouvem só em 127.0.0.1</text>
+
+  <!-- GraphQL -->
+  <rect x="40" y="226" width="230" height="74" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+  <text x="155" y="249" text-anchor="middle" class="t">GraphQL · :4000</text>
+  <text x="155" y="266" text-anchor="middle" class="d">Apollo Server 5 · tela "Meus pedidos"</text>
+  <text x="155" y="281" text-anchor="middle" class="d">DataLoader (N+1) · sem cópia dos dados</text>
+
+  <!-- REST -->
+  <rect x="365" y="226" width="250" height="84" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="490" y="249" text-anchor="middle" class="t">API REST · :3001</text>
+  <text x="490" y="266" text-anchor="middle" class="d">/jogos (CRUD) · /pedidos · 7 regras</text>
+  <text x="490" y="281" text-anchor="middle" class="d">Problem Details · OpenAPI</text>
+  <text x="490" y="296" text-anchor="middle" class="d">outbox + publisher confirms</text>
+
+  <path class="sync" d="M290,176 L200,224" marker-end="url(#s)"/>
+  <text x="60" y="214" class="l">/api/graphql → /</text>
+  <path class="sync" d="M480,176 L485,224" marker-end="url(#s)"/>
+  <text x="492" y="205" class="l">/api/jogos, /api/pedidos</text>
+  <path class="sync" d="M270,262 L363,262" marker-end="url(#s)"/>
+  <text x="276" y="255" class="l">busca os dados</text>
+  <text x="276" y="277" class="l">(HTTP)</text>
+
+  <!-- agregação -> logística (direita) -->
+  <path class="sync" d="M790,143 L905,143 L905,523 L872,523" marker-end="url(#s)"/>
+  <text x="812" y="136" class="l">agregação</text>
+  <text x="840" y="410" class="l" transform="rotate(90 912 380)">GET /entregas/:id</text>
+
+  <!-- Exchange -->
+  <rect x="365" y="342" width="250" height="46" rx="8" fill="#ffedd5" stroke="#c2410c"/>
+  <text x="490" y="362" text-anchor="middle" class="t">RabbitMQ · warhouse.eventos</text>
+  <text x="490" y="378" text-anchor="middle" class="d">exchange topic · durable · persistent</text>
+  <path class="async" d="M490,310 L490,340" marker-end="url(#a)"/>
+  <text x="498" y="329" class="la">pedido.&lt;tipo&gt;.&lt;status&gt;</text>
+
+  <!-- DLQ -->
+  <rect x="40" y="342" width="230" height="46" rx="8" fill="#fee2e2" stroke="#dc2626"/>
+  <text x="155" y="362" text-anchor="middle" class="t">warhouse.dlx → *.dlq</text>
+  <text x="155" y="378" text-anchor="middle" class="d">malformadas e falhas após 3 tentativas</text>
+
+  <!-- Filas -->
+  <rect x="40" y="420" width="250" height="40" rx="7" fill="#fff7ed" stroke="#c2410c"/>
+  <text x="165" y="437" text-anchor="middle" class="t" font-size="12">fila warhouse.notificacoes</text>
+  <text x="165" y="452" text-anchor="middle" class="d">binding: pedido.#</text>
+  <rect x="320" y="420" width="220" height="40" rx="7" fill="#fff7ed" stroke="#c2410c"/>
+  <text x="430" y="437" text-anchor="middle" class="t" font-size="12">fila warhouse.auditoria</text>
+  <text x="430" y="452" text-anchor="middle" class="d">binding: # (tudo)</text>
+  <rect x="570" y="420" width="300" height="40" rx="7" fill="#fff7ed" stroke="#c2410c"/>
+  <text x="720" y="437" text-anchor="middle" class="t" font-size="12">fila warhouse.logistica</text>
+  <text x="720" y="452" text-anchor="middle" class="d">pedido.*.criado | pago | enviado | cancelado</text>
+
+  <path class="async" d="M420,388 L190,418" marker-end="url(#a)"/>
+  <path class="async" d="M440,388 L432,418" marker-end="url(#a)"/>
+  <path class="async" d="M560,388 L700,418" marker-end="url(#a)"/>
+  <path class="async" d="M100,420 L100,390" marker-end="url(#a)"/>
+  <text x="46" y="408" class="la">nack</text>
+
+  <!-- Consumidores -->
+  <rect x="40" y="492" width="250" height="62" rx="8" fill="#fef9c3" stroke="#ca8a04"/>
+  <text x="165" y="514" text-anchor="middle" class="t">Notificações</text>
+  <text x="165" y="530" text-anchor="middle" class="d">e-mail ao cliente · retry 1 s, 2 s → DLQ</text>
+  <text x="165" y="545" text-anchor="middle" class="d">idempotência por eventoId</text>
+  <rect x="320" y="492" width="220" height="62" rx="8" fill="#e0e7ff" stroke="#4f46e5"/>
+  <text x="430" y="514" text-anchor="middle" class="t">Auditoria</text>
+  <text x="430" y="530" text-anchor="middle" class="d">auditoria.log (UTC)</text>
+  <text x="430" y="545" text-anchor="middle" class="d">idempotência durável</text>
+  <rect x="570" y="492" width="300" height="62" rx="8" fill="#cffafe" stroke="#0891b2"/>
+  <text x="720" y="514" text-anchor="middle" class="t">Logística · HTTP :3003</text>
+  <text x="720" y="530" text-anchor="middle" class="d">reserva, separação e rastreio da entrega</text>
+  <text x="720" y="545" text-anchor="middle" class="d">consome a fila e responde ao gateway</text>
+
+  <path class="async" d="M165,460 L165,490" marker-end="url(#a)"/>
+  <path class="async" d="M430,460 L430,490" marker-end="url(#a)"/>
+  <path class="async" d="M720,460 L720,490" marker-end="url(#a)"/>
+
+  <!-- Legenda -->
+  <line x1="40" y1="580" x2="72" y2="580" class="sync"/><text x="78" y="584" class="l">síncrono (HTTP, pedido e resposta)</text>
+  <line x1="270" y1="580" x2="302" y2="580" class="async"/><text x="308" y="584" class="la">assíncrono (AMQP, evento)</text>
+</svg>

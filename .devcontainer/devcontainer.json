@@ -1,20 +1,31 @@
 {
-  "name": "Arquitetura de Software - Grupo",
+  "name": "WarHouse - Grupo 04",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "postStartCommand": "docker compose up -d",
-  "forwardPorts": [3000, 4000, 15672],
+  "forwardPorts": [
+    3000,
+    15672
+  ],
   "portsAttributes": {
-    "3000": { "label": "REST / Gateway", "onAutoForward": "notify" },
-    "4000": { "label": "GraphQL", "onAutoForward": "notify" },
-    "15672": { "label": "Painel RabbitMQ (guest/guest)", "onAutoForward": "notify" }
+    "3000": {
+      "label": "Gateway do WarHouse (única porta pública)",
+      "onAutoForward": "notify"
+    },
+    "15672": {
+      "label": "Painel RabbitMQ (guest/guest)",
+      "onAutoForward": "notify"
+    }
   },
   "customizations": {
     "vscode": {
-      "extensions": ["dbaeumer.vscode-eslint", "GraphQL.vscode-graphql"]
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "GraphQL.vscode-graphql"
+      ]
     }
   }
 }

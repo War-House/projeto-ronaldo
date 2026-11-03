@@ -1,0 +1,136 @@
+rest        | API REST do WarHouse em http://127.0.0.1:3001
+rest        | [outbox] conectado ao RabbitMQ (amqp://localhost)
+graphql     | Servidor GraphQL do WarHouse em http://127.0.0.1:4000/ (público: http://localhost:3000/api/graphql)
+notificacoes| [notificacoes] aguardando eventos na fila "warhouse.notificacoes". Ctrl+C para sair.
+logistica   | [logistica] situação das entregas em http://127.0.0.1:3003/entregas/:pedidoId
+logistica   | [logistica] aguardando eventos na fila "warhouse.logistica". Ctrl+C para sair.
+auditoria   | [auditoria] aguardando eventos na fila "warhouse.auditoria". Ctrl+C para sair.
+gateway     | Gateway do WarHouse em http://localhost:3000
+
+Processo      Porta                     Situação
+rest          127.0.0.1:3001            no ar
+graphql       127.0.0.1:4000            no ar
+notificacoes  -                         no ar
+logistica     127.0.0.1:3003            no ar
+auditoria     -                         no ar
+gateway       0.0.0.0:3000 (pública)    no ar
+
+rest        | 90545b7d-2ac6-4cc3-8668-e3e3f871e603 [rest] POST /pedidos (app-cliente) -> 201 (4 ms)
+gateway     | 90545b7d-2ac6-4cc3-8668-e3e3f871e603 [gateway] POST /api/pedidos (app-cliente) -> 201 (32 ms)
+rest        | ffff1a3a-5114-4b38-8889-335d0f125e15 [rest] GET /pedidos/4 (app-cliente) -> 200 (2 ms)
+gateway     | ffff1a3a-5114-4b38-8889-335d0f125e15 [gateway] GET /api/pedidos/4 (app-cliente) -> 200 (5 ms)
+gateway     | eaf720e0-823e-4b42-a6f3-cb5ac7a28131 [gateway] POST /api/pedidos (app-cliente) -> 409 (4 ms)
+rest        | eaf720e0-823e-4b42-a6f3-cb5ac7a28131 [rest] POST /pedidos (app-cliente) -> 409 (2 ms)
+rest        | c25ab1ef-6d9b-4e6a-b584-c1a6b597c957 [rest] POST /pedidos (app-cliente) -> 422 (0 ms)
+gateway     | c25ab1ef-6d9b-4e6a-b584-c1a6b597c957 [gateway] POST /api/pedidos (app-cliente) -> 422 (4 ms)
+rest        | 9f7e60cf-dbac-4ade-b74a-45c2b45265a9 [rest] POST /pedidos (app-cliente) -> 422 (0 ms)
+gateway     | 9f7e60cf-dbac-4ade-b74a-45c2b45265a9 [gateway] POST /api/pedidos (app-cliente) -> 422 (4 ms)
+rest        | 29ccadc3-877b-45c2-8a0c-6a9fb021ae7f [rest] DELETE /jogos/1 (painel-admin) -> 409 (1 ms)
+gateway     | 29ccadc3-877b-45c2-8a0c-6a9fb021ae7f [gateway] DELETE /api/jogos/1 (painel-admin) -> 409 (7 ms)
+notificacoes| 90545b7d-2ac6-4cc3-8668-e3e3f871e603 [notificacoes] e-mail para marina@exemplo.test: "Pedido #4 (aluguel): recebemos o seu pedido." (evento pedido.aluguel.criado)
+logistica   | 90545b7d-2ac6-4cc3-8668-e3e3f871e603 [logistica] pedido #4: AGUARDANDO_PAGAMENTO (2 item(ns) reservado(s) para separação)
+rest        | 5697b6d8-3417-4e2c-b952-ba1ed7000aae [rest] PATCH /pedidos/2 (painel-admin) -> 409 (4 ms)
+rest        | 90545b7d-2ac6-4cc3-8668-e3e3f871e603 [outbox] publicado pedido.aluguel.criado (eventoId 74948018-47a5-48c1-8e00-8085027831eb)
+gateway     | 5697b6d8-3417-4e2c-b952-ba1ed7000aae [gateway] PATCH /api/pedidos/2 (painel-admin) -> 409 (10 ms)
+auditoria   | 90545b7d-2ac6-4cc3-8668-e3e3f871e603 [auditoria] registrado pedido.aluguel.criado (eventoId 74948018-47a5-48c1-8e00-8085027831eb)
+gateway     | 2da8129f-54de-4704-a37e-8c8a48856283 [gateway] POST /api/pedidos (app-cliente) -> 422 (3 ms)
+rest        | 2da8129f-54de-4704-a37e-8c8a48856283 [rest] POST /pedidos (app-cliente) -> 422 (2 ms)
+rest        | aea5e205-0e3f-47e9-8025-35805e5e4e10 [rest] GET /jogos?categoria=RPG (app-cliente) -> 400 (4 ms)
+gateway     | aea5e205-0e3f-47e9-8025-35805e5e4e10 [gateway] GET /api/jogos?categoria=RPG (app-cliente) -> 400 (6 ms)
+rest        | 7e31d3d7-e691-407d-a821-1c9c34272d0d [rest] POST /pedidos (app-cliente) -> 201 (1 ms)
+gateway     | 7e31d3d7-e691-407d-a821-1c9c34272d0d [gateway] POST /api/pedidos (app-cliente) -> 201 (6 ms)
+auditoria   | 7e31d3d7-e691-407d-a821-1c9c34272d0d [auditoria] registrado pedido.compra.criado (eventoId 4ff90dca-c12a-4461-abc8-1a05d0df88c2)
+rest        | 7e31d3d7-e691-407d-a821-1c9c34272d0d [outbox] publicado pedido.compra.criado (eventoId 4ff90dca-c12a-4461-abc8-1a05d0df88c2)
+notificacoes| 7e31d3d7-e691-407d-a821-1c9c34272d0d [notificacoes] pedido.compra.criado: falhou na tentativa 1/3 (servidor de e-mail recusou cliente@falha.test); nova tentativa em 1 s
+logistica   | 7e31d3d7-e691-407d-a821-1c9c34272d0d [logistica] pedido #5: AGUARDANDO_PAGAMENTO (1 item(ns) reservado(s) para separação)
+notificacoes| 7e31d3d7-e691-407d-a821-1c9c34272d0d [notificacoes] pedido.compra.criado: falhou na tentativa 2/3 (servidor de e-mail recusou cliente@falha.test); nova tentativa em 2 s
+notificacoes| 7e31d3d7-e691-407d-a821-1c9c34272d0d [notificacoes] pedido.compra.criado: falhou 3 vezes (servidor de e-mail recusou cliente@falha.test) -> DLQ
+notificacoes| demo-duplicado-57044714 [notificacoes] e-mail para duplicado@exemplo.test: "Pedido #900 (compra): recebemos o seu pedido." (evento pedido.compra.criado)
+auditoria   | demo-duplicado-57044714 [auditoria] registrado pedido.compra.criado (eventoId e1af0137-920f-4cd0-bcde-2c8cecde051b)
+logistica   | demo-duplicado-57044714 [logistica] pedido #900: AGUARDANDO_PAGAMENTO (1 item(ns) reservado(s) para separação)
+notificacoes| demo-duplicado-57044714 [notificacoes] pedido.compra.criado: evento e1af0137-920f-4cd0-bcde-2c8cecde051b já processado, ignorando (idempotência)
+notificacoes| demo-malformada-ef3097c9 [notificacoes] pedido.compra.criado: mensagem malformada (não é JSON) -> DLQ
+auditoria   | demo-duplicado-57044714 [auditoria] pedido.compra.criado: evento e1af0137-920f-4cd0-bcde-2c8cecde051b já processado, ignorando (idempotência)
+logistica   | demo-duplicado-57044714 [logistica] pedido.compra.criado: evento e1af0137-920f-4cd0-bcde-2c8cecde051b já processado, ignorando (idempotência)
+auditoria   | demo-malformada-ef3097c9 [auditoria] pedido.compra.criado: mensagem malformada (não é JSON) -> DLQ
+logistica   | demo-malformada-ef3097c9 [logistica] pedido.compra.criado: mensagem malformada (não é JSON) -> DLQ
+rest        | fc835c4a-ece6-4e8a-a1a8-ea05e65653e9 [rest] GET /pedidos?limite=50 (app-cliente) -> 200 (1 ms)
+rest        | fc835c4a-ece6-4e8a-a1a8-ea05e65653e9 [rest] GET /jogos?limite=3&categoria=ESTRATEGIA&disponivel=true (app-cliente) -> 200 (1 ms)
+rest        | fc835c4a-ece6-4e8a-a1a8-ea05e65653e9 [rest] GET /jogos?ids=5,7,3,8,4,1&limite=50 (app-cliente) -> 200 (1 ms)
+graphql     | fc835c4a-ece6-4e8a-a1a8-ea05e65653e9 [graphql] operação MeusPedidos -> 3 chamada(s) REST: GET /pedidos?limite=50 | GET /jogos?limite=3&categoria=ESTRATEGIA&disponivel=true | GET /jogos?ids=5,7,3,8,4,1&limite=50
+gateway     | fc835c4a-ece6-4e8a-a1a8-ea05e65653e9 [gateway] POST /api/graphql (app-cliente) -> 200 (72 ms)
+rest        | a98a5b74-4700-4a24-a564-9223c0a7788d [rest] GET /pedidos/4 (app-cliente) -> 200 (1 ms)
+rest        | a98a5b74-4700-4a24-a564-9223c0a7788d [rest] GET /jogos?ids=7,3&limite=50 (app-cliente) -> 200 (2 ms)
+logistica   | a98a5b74-4700-4a24-a564-9223c0a7788d [logistica] GET /entregas/4 -> 200
+gateway     | a98a5b74-4700-4a24-a564-9223c0a7788d [gateway] GET /api/painel/pedidos/4 (app-cliente) -> 200 (16 ms)
+logistica   | (encerrado)
+rest        | a7c28072-15e6-4c2f-a000-b80a1a4a7f87 [rest] GET /pedidos/4 (app-cliente) -> 200 (1 ms)
+rest        | a7c28072-15e6-4c2f-a000-b80a1a4a7f87 [rest] GET /jogos?ids=7,3&limite=50 (app-cliente) -> 200 (1 ms)
+gateway     | a7c28072-15e6-4c2f-a000-b80a1a4a7f87 [gateway] GET /api/painel/pedidos/4 (app-cliente) -> 200 (9 ms)
+logistica   | [logistica] situação das entregas em http://127.0.0.1:3003/entregas/:pedidoId
+logistica   | [logistica] aguardando eventos na fila "warhouse.logistica". Ctrl+C para sair.
+rest        | affe9781-af7c-4863-addb-b2b8b467371e [rest] POST /pedidos (app-cliente) -> 201 (1 ms)
+gateway     | affe9781-af7c-4863-addb-b2b8b467371e [gateway] POST /api/pedidos (app-cliente) -> 201 (4 ms)
+logistica   | affe9781-af7c-4863-addb-b2b8b467371e [logistica] pedido #6: AGUARDANDO_PAGAMENTO (1 item(ns) reservado(s) para separação)
+notificacoes| affe9781-af7c-4863-addb-b2b8b467371e [notificacoes] e-mail para joao@exemplo.test: "Pedido #6 (aluguel): recebemos o seu pedido." (evento pedido.aluguel.criado)
+auditoria   | affe9781-af7c-4863-addb-b2b8b467371e [auditoria] registrado pedido.aluguel.criado (eventoId fe122815-2022-40b7-ba8b-a5f7f08a3478)
+rest        | affe9781-af7c-4863-addb-b2b8b467371e [outbox] publicado pedido.aluguel.criado (eventoId fe122815-2022-40b7-ba8b-a5f7f08a3478)
+rest        | 75c89a3f-45a9-43c6-a0fc-730edf338869 [rest] GET /jogos?limite=2 (painel-admin) -> 200 (1 ms)
+gateway     | 75c89a3f-45a9-43c6-a0fc-730edf338869 [gateway] GET /api/jogos?limite=2 (painel-admin) -> 200 (4 ms)
+gateway     | 8f9df656-db85-47e5-b973-2102b144132f [gateway] GET /api/jogos (anônimo) -> 401 (1 ms)
+gateway     | 15d4bf57-d97c-4be5-8cd1-6cad667f813c [gateway] GET /api/jogos (anônimo) -> 401 (1 ms)
+gateway     | 3d9f912f-4eaf-4adb-bbc7-ceb37b8a0179 [gateway] DELETE /api/jogos/2 (app-cliente) -> 403 (2 ms)
+gateway     | 555ba7bf-cfa7-4279-9ba9-af4e876da691 [gateway] GET /api/graphql (parceiro-ludoteca) -> 403 (0 ms)
+gateway     | bc1b9813-e65c-446c-ae7f-c7aad89c9d93 [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 200 (4 ms)
+rest        | bc1b9813-e65c-446c-ae7f-c7aad89c9d93 [rest] GET /jogos?limite=1 (parceiro-ludoteca) -> 200 (4 ms)
+rest        | a4227489-b2aa-4796-9d06-25ef69b6d993 [rest] GET /jogos?limite=1 (parceiro-ludoteca) -> 200 (2 ms)
+gateway     | a4227489-b2aa-4796-9d06-25ef69b6d993 [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 200 (5 ms)
+rest        | a4a29c2a-5deb-44e7-87d3-b3a26f260c7b [rest] GET /jogos?limite=1 (parceiro-ludoteca) -> 200 (2 ms)
+gateway     | a4a29c2a-5deb-44e7-87d3-b3a26f260c7b [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 200 (3 ms)
+gateway     | 30496cff-6de0-4475-9727-737a7f785de0 [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 200 (3 ms)
+rest        | 30496cff-6de0-4475-9727-737a7f785de0 [rest] GET /jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+gateway     | c1d9cfb4-4917-4bc5-ac66-1b0ae0afdc20 [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+rest        | c1d9cfb4-4917-4bc5-ac66-1b0ae0afdc20 [rest] GET /jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+rest        | 7de766a4-064e-45c5-8965-6f7ec0bb23ab [rest] GET /jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+gateway     | 7de766a4-064e-45c5-8965-6f7ec0bb23ab [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 200 (2 ms)
+gateway     | c3f84311-dd63-4a66-8607-9bdc0a4bf7ba [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+rest        | c3f84311-dd63-4a66-8607-9bdc0a4bf7ba [rest] GET /jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+rest        | d6d430e5-c2fd-438b-b818-80787160750f [rest] GET /jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+gateway     | d6d430e5-c2fd-438b-b818-80787160750f [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 200 (2 ms)
+gateway     | 9a8fc256-412b-4d90-be30-4afd0a342d1e [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+rest        | 9a8fc256-412b-4d90-be30-4afd0a342d1e [rest] GET /jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+gateway     | 9a544cc1-d89d-4202-86ca-ea20511ac49c [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+rest        | 9a544cc1-d89d-4202-86ca-ea20511ac49c [rest] GET /jogos?limite=1 (parceiro-ludoteca) -> 200 (1 ms)
+gateway     | 6fb9f454-93dc-4f4f-beb8-bc1131727499 [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 429 (0 ms)
+gateway     | c23d2917-9a36-42a6-9b70-d0b04b1e100c [gateway] GET /api/jogos?limite=1 (parceiro-ludoteca) -> 429 (0 ms)
+gateway     | 50b447dc-fdb7-4c17-921c-fda68cdd58bb [gateway] GET /api/jogos?atraso=3000 (painel-admin) -> 504 (2003 ms)
+rest        | c71cc3c7-7a57-403e-a02c-14c97d58a3e9 [rest] GET /jogos?limite=1 (painel-admin) -> 200 (1 ms)
+gateway     | c71cc3c7-7a57-403e-a02c-14c97d58a3e9 [gateway] GET /api/jogos?limite=1 (painel-admin) -> 200 (3 ms)
+rest        | f57657c5-4e73-4d21-8371-01f187e84aed [rest] GET /jogos?limite=1 (painel-admin) -> 200 (1 ms)
+gateway     | f57657c5-4e73-4d21-8371-01f187e84aed [gateway] GET /api/jogos?limite=1 (painel-admin) -> 200 (3 ms)
+rest        | dcd6b4aa-a29d-45eb-a80a-b6782f0e8acb [rest] GET /jogos?limite=1 (painel-admin) -> 200 (1 ms)
+gateway     | dcd6b4aa-a29d-45eb-a80a-b6782f0e8acb [gateway] GET /api/jogos?limite=1 (painel-admin) -> 200 (3 ms)
+rest        | 4bc7a137-7c4f-48a3-a2dd-64d1b0acc0cb [rest] GET /jogos?limite=1 (painel-admin) -> 200 (1 ms)
+gateway     | 4bc7a137-7c4f-48a3-a2dd-64d1b0acc0cb [gateway] GET /api/jogos?limite=1 (painel-admin) -> 200 (3 ms)
+rest        | 31af01d4-0f8f-42d5-9e81-f8c589c7dd30 [rest] GET /jogos?limite=1 (painel-admin) -> 200 (1 ms)
+gateway     | 31af01d4-0f8f-42d5-9e81-f8c589c7dd30 [gateway] GET /api/jogos?limite=1 (painel-admin) -> 200 (3 ms)
+rest        | (encerrado)
+gateway     | c52de825-cdce-4806-b191-cb7b5e7bd5c1 [gateway] GET /api/jogos?limite=1 (painel-admin) -> 502 (225 ms)
+gateway     | 6f2a5dd2-8e80-484d-b257-42cefc350b6a [gateway] GET /api/jogos?limite=1 (painel-admin) -> 502 (2 ms)
+gateway     | 92f73c91-5c6c-419d-8a49-075db0e15885 [gateway] GET /api/jogos?limite=1 (painel-admin) -> 503 (1 ms)
+gateway     | dbd1e8c8-9f26-4bdf-a088-6c9bd7124182 [gateway] GET /api/jogos?limite=1 (painel-admin) -> 503 (0 ms)
+gateway     | 4905e95e-7ca9-405c-89c2-a24e43797c98 [gateway] GET /api/painel/pedidos/1 (app-cliente) -> 503 (1 ms)
+gateway     | 9cb9f13e-5eb2-43e7-93ac-ad819e22b418 [gateway] GET /api/jogos?limite=1 (painel-admin) -> 503 (1 ms)
+gateway     | e8bb3ae3-599a-479b-b1ba-b087dfc715de [gateway] GET /api/jogos?limite=1 (painel-admin) -> 503 (1 ms)
+rest        | API REST do WarHouse em http://127.0.0.1:3001
+rest        | [outbox] conectado ao RabbitMQ (amqp://localhost)
+gateway     | e1ff0b40-65db-4f2a-a37c-2e9893d31788 [gateway] GET /api/jogos?limite=1 (painel-admin) -> 503 (1 ms)
+gateway     | dfaada84-1449-484f-a448-995566ab5236 [gateway] GET /api/jogos?limite=1 (painel-admin) -> 503 (1 ms)
+rest        | d02de347-3d93-4720-8762-7811fd73497e [rest] GET /jogos?limite=1 (painel-admin) -> 200 (4 ms)
+gateway     | d02de347-3d93-4720-8762-7811fd73497e [gateway] GET /api/jogos?limite=1 (painel-admin) -> 200 (9 ms)
+gateway     | (encerrado)
+notificacoes| (encerrado)
+auditoria   | (encerrado)
+logistica   | (encerrado)
+rest        | (encerrado)
+graphql     | (encerrado)

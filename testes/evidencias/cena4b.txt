@@ -1,0 +1,3 @@
+1) Publicando o evento e1af0137-920f-4cd0-bcde-2c8cecde051b DUAS vezes (pedido.compra.criado, X-Request-Id demo-duplicado-57044714)
+2) Publicando uma mensagem malformada (não é JSON), X-Request-Id demo-malformada-ef3097c9
+Pronto. Veja os logs dos consumidores e rode: npm run filas

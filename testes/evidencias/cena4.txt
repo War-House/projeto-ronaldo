@@ -1,0 +1,11 @@
+== Cena 4: falha e DLQ ==
+
+POST /api/pedidos -> 201  [location: /api/pedidos/5 | x-ratelimit-remaining: 22]
+   X-Request-Id: 7e31d3d7-e691-407d-a821-1c9c34272d0d
+
+Acompanhe no log do consumidor de notificações (X-Request-Id 7e31d3d7-e691-407d-a821-1c9c34272d0d):
+  tentativa 1/3 -> espera 1 s -> tentativa 2/3 -> espera 2 s -> falhou 3 vezes -> DLQ
+Depois:
+  cd mensageria && npm run filas     (mostra warhouse.notificacoes.dlq com a mensagem e o motivo)
+  cd mensageria && npm run falhas    (mesmo evento 2x -> idempotência; mensagem malformada -> DLQ)
+Painel do RabbitMQ: http://localhost:15672 (guest/guest), aba Queues.

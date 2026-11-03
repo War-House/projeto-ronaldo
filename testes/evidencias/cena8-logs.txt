@@ -1,0 +1,6 @@
+rest        | affe9781-af7c-4863-addb-b2b8b467371e [rest] POST /pedidos (app-cliente) -> 201 (1 ms)
+gateway     | affe9781-af7c-4863-addb-b2b8b467371e [gateway] POST /api/pedidos (app-cliente) -> 201 (4 ms)
+logistica   | affe9781-af7c-4863-addb-b2b8b467371e [logistica] pedido #6: AGUARDANDO_PAGAMENTO (1 item(ns) reservado(s) para separação)
+notificacoes| affe9781-af7c-4863-addb-b2b8b467371e [notificacoes] e-mail para joao@exemplo.test: "Pedido #6 (aluguel): recebemos o seu pedido." (evento pedido.aluguel.criado)
+auditoria   | affe9781-af7c-4863-addb-b2b8b467371e [auditoria] registrado pedido.aluguel.criado (eventoId fe122815-2022-40b7-ba8b-a5f7f08a3478)
+rest        | affe9781-af7c-4863-addb-b2b8b467371e [outbox] publicado pedido.aluguel.criado (eventoId fe122815-2022-40b7-ba8b-a5f7f08a3478)

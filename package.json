@@ -1,10 +1,25 @@
 {
-  "name": "arquitetura-de-software-grupo",
+  "name": "warhouse-grupo-04",
   "private": true,
+  "description": "WarHouse - aluguel e compra de jogos de tabuleiro. Projeto Fio-Condutor, Grupo 04.",
   "type": "module",
   "scripts": {
+    "instalar": "node scripts/instalar.mjs",
     "rabbit:up": "docker compose up -d",
     "rabbit:down": "docker compose down",
-    "rabbit:check": "node scripts/rabbit-check.mjs"
+    "rabbit:check": "node scripts/rabbit-check.mjs",
+    "rabbit:preparar": "node mensageria/preparar-rabbitmq.js",
+    "rabbit:filas": "node mensageria/ver-filas.js",
+    "rabbit:logs": "docker compose logs -f rabbitmq",
+    "docker:completo": "docker compose --profile completo up -d --build",
+    "docker:parar": "docker compose --profile completo down",
+    "tudo": "node scripts/iniciar-tudo.mjs",
+    "test": "node --test rest/test/api.test.js gateway/test/gateway.test.js",
+    "cena2": "node testes/cena2-rest.js",
+    "cena4": "node testes/cena4-falha.js",
+    "cena5": "node testes/cena5-graphql.js",
+    "cena6": "node testes/teste-gateway.js",
+    "cena7": "node testes/cena7-painel.js",
+    "cena8": "node testes/cena8-rastreio.js"
   }
 }

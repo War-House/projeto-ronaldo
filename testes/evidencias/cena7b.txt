@@ -1,0 +1,40 @@
+== Cena 7: GET /api/painel/pedidos/4 (app-cliente) ==
+
+GET /api/painel/pedidos/4 -> 200  [x-ratelimit-remaining: 19]
+   X-Request-Id: a7c28072-15e6-4c2f-a000-b80a1a4a7f87
+{
+  "pedido": {
+    "id": 4,
+    "tipo": "ALUGUEL",
+    "status": "CRIADO",
+    "valorTotal": 83.4,
+    "dataInicio": "2026-11-04",
+    "dataFim": "2026-11-07",
+    "criadoEm": "2026-11-03T19:48:38.356Z"
+  },
+  "itens": [
+    {
+      "quantidade": 1,
+      "jogo": {
+        "id": 7,
+        "nome": "War",
+        "categoria": "ESTRATEGIA"
+      }
+    },
+    {
+      "quantidade": 1,
+      "jogo": {
+        "id": 3,
+        "nome": "Dixit",
+        "categoria": "PARTY"
+      }
+    }
+  ],
+  "entrega": null,
+  "parcial": true,
+  "indisponiveis": [
+    "logistica"
+  ]
+}
+
+Resposta PARCIAL: indisponível(is) = logistica. O pedido continua visível (degradação graciosa).

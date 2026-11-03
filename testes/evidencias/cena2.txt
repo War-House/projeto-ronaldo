@@ -1,0 +1,40 @@
+== Cena 2: API REST pelo gateway (cliente: app-cliente) ==
+
+POST /api/pedidos -> 201  [location: /api/pedidos/4 | x-ratelimit-remaining: 29]
+   X-Request-Id: 90545b7d-2ac6-4cc3-8668-e3e3f871e603
+   corpo: {"id":4,"clienteId":"app-cliente","tipo":"ALUGUEL","status":"CRIADO","itens":[{"jogoId":7,"quantidade":1},{"jogoId":3,"quantidade":1}],"dataInicio":"2026-11-04","dataFim":"2026-11-07","dias":3,"valorTotal":83.4,"criadoEm":"2026-11-03T19:48:38.356Z","atualizadoEm":"2026-11-03T19:48:38.356Z"}
+
+GET /api/pedidos/4 -> 200  [x-ratelimit-remaining: 28]
+   X-Request-Id: ffff1a3a-5114-4b38-8889-335d0f125e15
+   pedido #4: ALUGUEL CRIADO, 2026-11-04 a 2026-11-07, R$ 83.4
+
+-- Regras de negócio do WarHouse --
+
+POST /api/pedidos -> 409  [x-ratelimit-remaining: 27]
+   X-Request-Id: eaf720e0-823e-4b42-a6f3-cb5ac7a28131
+   Problem Details: 409 Estoque insuficiente - "Exploding Kittens": pedidos 1, disponíveis 0.
+
+POST /api/pedidos -> 422  [x-ratelimit-remaining: 26]
+   X-Request-Id: c25ab1ef-6d9b-4e6a-b584-c1a6b597c957
+   Problem Details: 422 Data no passado - O aluguel não pode começar em 2026-01-10: a data é anterior a hoje (2026-11-03, UTC).
+
+POST /api/pedidos -> 422  [x-ratelimit-remaining: 25]
+   X-Request-Id: 9f7e60cf-dbac-4ade-b74a-45c2b45265a9
+   Problem Details: 422 Período de aluguel inválido - O aluguel deve durar de 1 a 30 dias (recebido: 45).
+
+DELETE /api/jogos/1 -> 409  [x-ratelimit-remaining: 119]
+   X-Request-Id: 29ccadc3-877b-45c2-8a0c-6a9fb021ae7f
+   Problem Details: 409 Jogo com histórico de pedidos - O jogo 1 aparece em 1 pedido(s) e não pode ser excluído. Zere o estoque (PATCH exemplaresDisponiveis = 0) para retirá-lo do catálogo.
+
+PATCH /api/pedidos/2 -> 409  [x-ratelimit-remaining: 118]
+   X-Request-Id: 5697b6d8-3417-4e2c-b952-ba1ed7000aae
+   Problem Details: 409 Transição de status inválida - Um pedido ENVIADO não pode passar para CANCELADO. Permitido: CONCLUIDO.
+
+POST /api/pedidos -> 422  [x-ratelimit-remaining: 24]
+   X-Request-Id: 2da8129f-54de-4704-a37e-8c8a48856283
+   Problem Details: 422 Dados inválidos - Um ou mais campos são inválidos.
+   erros: tipo (obrigatório: um de ALUGUEL, COMPRA); email (obrigatório: e-mail válido para as notificações); itens (obrigatório: lista com 1 a 10 itens)
+
+GET /api/jogos?categoria=RPG -> 400  [x-ratelimit-remaining: 23]
+   X-Request-Id: aea5e205-0e3f-47e9-8025-35805e5e4e10
+   Problem Details: 400 Parâmetro inválido - categoria deve ser uma de: ESTRATEGIA, FAMILIA, PARTY, COOPERATIVO, CARTAS.

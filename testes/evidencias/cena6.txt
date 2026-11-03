@@ -1,0 +1,70 @@
+
+========== 200: chamada válida (painel-admin) ==========
+
+GET /api/jogos?limite=2 -> 200  [x-ratelimit-remaining: 117]
+   X-Request-Id: 75c89a3f-45a9-43c6-a0fc-730edf338869
+
+========== 401: sem chave e com chave errada ==========
+
+GET /api/jogos -> 401
+   X-Request-Id: 8f9df656-db85-47e5-b973-2102b144132f
+   Problem Details: 401 Unauthorized - Informe uma chave válida no cabeçalho X-API-Key.
+
+GET /api/jogos -> 401
+   X-Request-Id: 15d4bf57-d97c-4be5-8cd1-6cad667f813c
+   Problem Details: 401 Unauthorized - Informe uma chave válida no cabeçalho X-API-Key.
+
+========== 403: cliente conhecido, rota não permitida no plano dele ==========
+
+DELETE /api/jogos/2 -> 403
+   X-Request-Id: 3d9f912f-4eaf-4adb-bbc7-ceb37b8a0179
+   Problem Details: 403 Forbidden - O cliente app-cliente não tem acesso a DELETE /api/jogos/2.
+
+GET /api/graphql -> 403
+   X-Request-Id: 555ba7bf-cfa7-4279-9ba9-af4e876da691
+   Problem Details: 403 Forbidden - O cliente parceiro-ludoteca não tem acesso a GET /api/graphql.
+
+========== 429: o parceiro tem limite de 10 requisições por minuto ==========
+   1: 200 restantes=9
+   2: 200 restantes=8
+   3: 200 restantes=7
+   4: 200 restantes=6
+   5: 200 restantes=5
+   6: 200 restantes=4
+   7: 200 restantes=3
+   8: 200 restantes=2
+   9: 200 restantes=1
+  10: 200 restantes=0
+  11: 429 restantes=0 retry-after=60s
+  12: 429 restantes=0 retry-after=60s
+
+========== 504: serviço lento (a API demora 3 s; o gateway desiste em 2 s) ==========
+
+GET /api/jogos?atraso=3000 -> 504  [x-ratelimit-remaining: 116]
+   X-Request-Id: 50b447dc-fdb7-4c17-921c-fda68cdd58bb
+   Problem Details: 504 Gateway Timeout - O serviço rest não respondeu em 2000 ms.
+
+GET /api/jogos?limite=1 -> 200  [x-ratelimit-remaining: 115]
+   X-Request-Id: c71cc3c7-7a57-403e-a02c-14c97d58a3e9
+
+========== 502 e 503: serviço fora do ar e disjuntor ==========
+>>> Desligue a API REST agora (npm run tudo: "parar rest"; ou Ctrl+C no terminal da API).
+    Aguardando o 502...
+  -> 502 Não foi possível obter resposta do serviço rest.
+  -> 502 Não foi possível obter resposta do serviço rest.
+  -> 503 O serviço rest está temporariamente indisponível. Tente novamente em instantes. (Retry-After: 10s)
+  -> 503 O serviço rest está temporariamente indisponível. Tente novamente em instantes. (Retry-After: 10s)
+
+GET /api/painel/pedidos/1 -> 503  [x-ratelimit-remaining: 17]
+   X-Request-Id: 4905e95e-7ca9-405c-89c2-a24e43797c98
+   Problem Details: 503 Service Unavailable - O serviço de pedidos (API REST) não respondeu.
+
+========== Recuperação ==========
+>>> Religue a API REST agora (npm run tudo: "iniciar rest"; ou npm start na pasta rest).
+    O disjuntor fica aberto por 10 s e depois deixa passar uma chamada de teste.
+  -> 503 (Retry-After: 8s)
+  -> 503 (Retry-After: 6s)
+  -> 503 (Retry-After: 4s)
+  -> 503 (Retry-After: 2s)
+  -> 200
+Disjuntor fechado de novo: o serviço se recuperou.

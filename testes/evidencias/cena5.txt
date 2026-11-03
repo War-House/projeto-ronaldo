@@ -1,0 +1,15 @@
+== Cena 5: tela "Meus pedidos" (POST /api/graphql -> 200) ==
+X-Request-Id: fc835c4a-ece6-4e8a-a1a8-ea05e65653e9
+
+Resumo: 4 pedidos, 2 aluguel(éis) ativo(s), R$ 927.50
+  #5 COMPRA  CRIADO    R$  279.90 | 1x Azul (2 a 4 jogadores)
+  #4 ALUGUEL CRIADO    R$   83.40 2026-11-04 a 2026-11-07 | 1x War (3 a 6 jogadores), 1x Dixit (3 a 8 jogadores)
+  #3 COMPRA  CRIADO    R$  459.80 | 1x Codenames (2 a 8 jogadores), 1x Pandemic (2 a 4 jogadores)
+  #1 ALUGUEL PAGO      R$  104.40 2026-11-04 a 2026-11-07 | 1x Catan (3 a 4 jogadores), 1x Dixit (3 a 8 jogadores)
+Sugestões: Catan (R$ 19.9/dia), War (R$ 12.9/dia)
+
+Comparação:
+  - o app fez 1 chamada (esta consulta GraphQL);
+  - em REST, a mesma tela exigiria 8 chamadas pela internet (1 de pedidos + 6 de jogos + 1 de sugestões);
+  - por dentro, o servidor GraphQL fez 3 chamadas REST na rede interna (DataLoader agrupou os 6 jogos em 1).
+  -> 7 chamadas a menos para o app.

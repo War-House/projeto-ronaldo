@@ -1,0 +1,13 @@
+== Cena 8: rastreamento ponta a ponta ==
+
+POST /api/pedidos -> 201  [location: /api/pedidos/6 | x-ratelimit-remaining: 18]
+   X-Request-Id: affe9781-af7c-4863-addb-b2b8b467371e
+
+Procure este identificador nos logs: affe9781-af7c-4863-addb-b2b8b467371e
+Aguardando os consumidores (2 s)...
+
+auditoria.log (gravado pelo consumidor de auditoria) - 1 linha(s) com affe9781-af7c-4863-addb-b2b8b467371e:
+  {"eventoId":"fe122815-2022-40b7-ba8b-a5f7f08a3478","tipo":"pedido.aluguel.criado","requestId":"affe9781-af7c-4863-addb-b2b8b467371e","clienteId":"app-cliente","pedidoId":6,"ocorridoEm":"2026-11-03T19:48:49.734Z","registradoEm":"2026-11-03T19:48:49.936Z"}
+
+No Windows (PowerShell), com logs em arquivo: Select-String -Path *.log -Pattern affe9781-af7c-4863-addb-b2b8b467371e
+No Linux/macOS: grep affe9781-af7c-4863-addb-b2b8b467371e *.log

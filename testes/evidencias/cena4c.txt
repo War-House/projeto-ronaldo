@@ -1,0 +1,13 @@
+Fila                               prontas  consumidores
+warhouse.notificacoes                    0             1
+warhouse.notificacoes.dlq                2             0
+warhouse.logistica                       0             1
+warhouse.logistica.dlq                   1             0
+warhouse.auditoria                       0             1
+warhouse.auditoria.dlq                   1             0
+
+Mensagens nas DLQs (motivo registrado pelo RabbitMQ no cabeçalho x-death):
+  warhouse.notificacoes.dlq: warhouse.notificacoes | X-Request-Id 7e31d3d7-e691-407d-a821-1c9c34272d0d | motivo=rejected | tentativas feitas=3 | "{"eventoId":"4ff90dca-c12a-4461-abc8-1a0..."
+  warhouse.notificacoes.dlq: warhouse.notificacoes | X-Request-Id demo-malformada-ef3097c9 | motivo=rejected | tentativas feitas=1 | "{ isto não é JSON..."
+  warhouse.logistica.dlq: warhouse.logistica | X-Request-Id demo-malformada-ef3097c9 | motivo=rejected | tentativas feitas=1 | "{ isto não é JSON..."
+  warhouse.auditoria.dlq: warhouse.auditoria | X-Request-Id demo-malformada-ef3097c9 | motivo=rejected | tentativas feitas=1 | "{ isto não é JSON..."

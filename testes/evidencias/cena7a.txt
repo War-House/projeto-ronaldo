@@ -1,0 +1,42 @@
+== Cena 7: GET /api/painel/pedidos/4 (app-cliente) ==
+
+GET /api/painel/pedidos/4 -> 200  [x-ratelimit-remaining: 20]
+   X-Request-Id: a98a5b74-4700-4a24-a564-9223c0a7788d
+{
+  "pedido": {
+    "id": 4,
+    "tipo": "ALUGUEL",
+    "status": "CRIADO",
+    "valorTotal": 83.4,
+    "dataInicio": "2026-11-04",
+    "dataFim": "2026-11-07",
+    "criadoEm": "2026-11-03T19:48:38.356Z"
+  },
+  "itens": [
+    {
+      "quantidade": 1,
+      "jogo": {
+        "id": 7,
+        "nome": "War",
+        "categoria": "ESTRATEGIA"
+      }
+    },
+    {
+      "quantidade": 1,
+      "jogo": {
+        "id": 3,
+        "nome": "Dixit",
+        "categoria": "PARTY"
+      }
+    }
+  ],
+  "entrega": {
+    "situacao": "AGUARDANDO_PAGAMENTO",
+    "codigoRastreio": null,
+    "atualizadoEm": "2026-11-03T19:48:38.426Z"
+  },
+  "parcial": false,
+  "indisponiveis": []
+}
+
+Resposta COMPLETA: pedido + jogos (API REST) + entrega (Logística) em 1 chamada.
