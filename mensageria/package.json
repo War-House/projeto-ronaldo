@@ -1,0 +1,21 @@
+{
+  "name": "warhouse-mensageria",
+  "version": "1.0.0",
+  "description": "Parte 2 - Consumidores dos eventos do WarHouse (RabbitMQ, exchange topic, DLQ, idempotência)",
+  "type": "module",
+  "scripts": {
+    "notificacoes": "node notificacoes.js",
+    "logistica": "node logistica.js",
+    "auditoria": "node auditoria.js",
+    "preparar": "node preparar-rabbitmq.js",
+    "filas": "node ver-filas.js",
+    "falhas": "node provocar-falhas.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.9",
+    "express": "^5.2.0"
+  }
+}

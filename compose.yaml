@@ -1,10 +1,106 @@
-# RabbitMQ para os tutoriais de Mensageria.
-# Usuário e senha padrão: guest / guest (somente para estudo).
+# compose.yaml do WarHouse — Docker e RabbitMQ
+#
+# MODO 1 (o do README, usado na apresentação): só o RabbitMQ no Docker; os programas Node.js
+# rodam na máquina com "npm run tudo".
+#   docker compose up -d                 sobe o RabbitMQ 4 (AMQP 5672 e painel 15672)
+#   docker compose ps                    mostra o contêiner e o estado do healthcheck
+#   docker compose logs -f rabbitmq      acompanha o log do broker
+#   docker compose down                  desliga (as filas ficam guardadas no volume)
+#   docker compose down -v               desliga e APAGA as filas e mensagens (começa do zero)
+#
+# MODO 2 (extra): o ambiente INTEIRO em contêineres, com um só comando.
+#   docker compose --profile completo up -d --build
+#   -> RabbitMQ, API REST, GraphQL, gateway e os 3 consumidores, cada um com seu Dockerfile.
+#      Só o gateway (3000) e o painel do RabbitMQ (15672) ficam acessíveis de fora; o resto
+#      conversa pela rede interna "warhouse-interna", sem porta publicada.
+#   Não rode o modo 2 junto com o "npm run tudo" (as portas 3000 e 5672 entrariam em conflito).
+#
+# Usuário e senha padrão do RabbitMQ: guest / guest (somente para estudo).
+name: warhouse
+
 services:
   rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq
+    hostname: warhouse-rabbitmq      # o nome do nó fixo mantém os dados do volume entre reinícios
     restart: unless-stopped
     ports:
       - "5672:5672"     # protocolo AMQP (usado pelo código)
       - "15672:15672"   # painel web de administração
+    volumes:
+      - rabbitmq-dados:/var/lib/rabbitmq   # filas durable e mensagens persistent sobrevivem ao restart
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [warhouse-interna]
+
+  # ---------- Perfil "completo" (extra) ----------
+  rest:
+    profiles: [completo]
+    build: ./rest
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+    networks: [warhouse-interna]
+
+  graphql:
+    profiles: [completo]
+    build: ./graphql
+    environment:
+      REST_URL: http://rest:3001
+    depends_on: [rest]
+    networks: [warhouse-interna]
+
+  notificacoes:
+    profiles: [completo]
+    build: ./mensageria
+    command: ["node", "notificacoes.js"]
+    restart: unless-stopped
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+    networks: [warhouse-interna]
+
+  logistica:
+    profiles: [completo]
+    build: ./mensageria
+    command: ["node", "logistica.js"]
+    restart: unless-stopped
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+    networks: [warhouse-interna]
+
+  auditoria:
+    profiles: [completo]
+    build: ./mensageria
+    command: ["node", "auditoria.js"]
+    restart: unless-stopped
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+    networks: [warhouse-interna]
+
+  gateway:
+    profiles: [completo]
+    build: ./gateway
+    ports:
+      - "3000:3000"     # a ÚNICA porta de aplicação publicada
+    environment:
+      REST_URL: http://rest:3001
+      GRAPHQL_URL: http://graphql:4000
+      LOGISTICA_URL: http://logistica:3003
+    depends_on: [rest, graphql, logistica]
+    networks: [warhouse-interna]
+
+volumes:
+  rabbitmq-dados:
+
+networks:
+  warhouse-interna:

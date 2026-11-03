@@ -1,0 +1,1 @@
+{ "tipo": "COMPRA", "email": "cliente@falha.test", "itens": [{ "jogoId": 5, "quantidade": 1 }] }
