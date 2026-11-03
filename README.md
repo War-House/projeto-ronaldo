@@ -5,7 +5,7 @@
 **Integrantes:** Ana Carolina Monteiro dos Santos · Ana Laura Amoroso do Vale · Gabriela Scattolin Ribeiro · Larissa Rodrigues · Maria Júlia Fernandes Capellato · Milena Vieira dos Santos · Sylvia Helena Galassini Santana
 
 - Repositório Git: **https://github.com/War-House/projeto-ronaldo**
-- Vídeo de reserva (plano B, até 10 min): **LINK-DO-VIDEO** ← *(preencher depois do ensaio)*
+
 
 ---
 
