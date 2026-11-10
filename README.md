@@ -2,7 +2,7 @@
 
 **Grupo 04** · Modelagem de Padrões de Projeto · Tema: **WarHouse**, plataforma de aluguel e compra de jogos de tabuleiro
 
-**Integrantes:** Ana Carolina Monteiro dos Santos · Ana Laura Amoroso do Vale · Gabriela Scattolin Ribeiro · Larissa Rodrigues · Maria Júlia Fernandes Capellato · Milena Vieira dos Santos · Sylvia Helena Galassini Santana
+**Integrantes:** Ana Carolina Monteiro dos Santos · Ana Laura Amoroso do Vale · Gabriella Scattolin · Larissa Rodrigues · Maria Júlia Fernandes Capellato · Milena Vieira dos Santos · Sylvia Helena Galassini Santana
 
 - Repositório Git: **https://github.com/War-House/projeto-ronaldo**
 
