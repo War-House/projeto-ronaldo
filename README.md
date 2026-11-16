@@ -187,13 +187,13 @@ Todas participaram de todas as partes e apresentam juntas; a tabela indica a res
 
 | Integrante | Responsável principal por |
 |------------|---------------------------|
-| Ana Carolina Monteiro dos Santos | Parte 1 — API REST (`rest/`, `openapi.yaml`, `cliente.js`) |
-| Larissa Rodrigues | Parte 2 — Mensageria (outbox, consumidores, DLQ, idempotência) |
-| Maria Júlia Fernandes Capellato | Parte 3 — GraphQL (schema, resolvers, DataLoader) |
-| Ana Laura Amoroso do Vale | Parte 4 — API Gateway e integração (`gateway/`, `scripts/`, `compose.yaml`) |
-| Gabriela Scattolin Ribeiro | Parte 5 — relatório técnico, diagrama, decisões e riscos |
-| Milena Vieira dos Santos | Documentação do semestre e índice (`documentacao/`, `00-indice.pdf`) |
-| Sylvia Helena Galassini Santana | Testes e demonstração (`testes/`, `node --test`), slides e vídeo de reserva |
+| Larissa Rodrigues| Parte 1 — Ambiente no ar |
+| Maria Júlia Fernandes Capellato | Parte 2 — API REST pelo Gateway |
+| Gabriela Scattolin Ribeiro | Parte 3 — Evento |
+| Milena Vieira dos Santos | Parte 4 — Falha e duplicidade |
+| Sylvia Helena Galassini Santana | Parte 5 — GraphQL |
+| Ana Laura Amoroso do Vale | Parte 6 — Proteção do Gateway |
+| Ana Carolina Monteiro dos Santos | Partes 7 e 8 — Rota agregada e Fechamento |
 
 Marcos no Git: `etapa-1-rest`, `etapa-2-mensageria`, `etapa-3-graphql`, `etapa-4-gateway`, `entrega-final`.
 
