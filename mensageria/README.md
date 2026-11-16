@@ -29,6 +29,26 @@ O arquivo `provocar-falhas.js` é utilizado para testar o comportamento da mensa
 
 Por fim, o arquivo `ver-filas.js` permite consultar informações sobre as filas do RabbitMQ e suas respectivas filas de mensagens não processadas, facilitando o acompanhamento do funcionamento da mensageria.
 
+## Arquivos de suporte e configuração
+
+Além dos arquivos responsáveis pela lógica da mensageria e pelo processamento dos eventos, o projeto possui arquivos de suporte e configuração. Eles não são responsáveis diretamente pela publicação ou pelo consumo dos eventos, mas auxiliam na instalação das dependências, na execução da aplicação e na organização do ambiente.
+
+### `package.json`
+
+Reúne as configurações principais do projeto, incluindo as dependências necessárias para seu funcionamento e os comandos utilizados para executar os consumidores, preparar o RabbitMQ, consultar as filas e realizar os testes.
+
+### `package-lock.json`
+
+Registra as versões das dependências instaladas no projeto, ajudando a garantir que a instalação dos pacotes seja consistente nos diferentes ambientes utilizados pela equipe.
+
+### `Dockerfile`
+
+Contém as instruções necessárias para construir uma imagem Docker da aplicação, permitindo preparar seu ambiente de execução em um contêiner.
+
+### `.dockerignore`
+
+Define quais arquivos e pastas devem ser ignorados durante a construção da imagem Docker, evitando a inclusão de conteúdos desnecessários.
+
 ## Tratamento de mensagens e falhas
 
 A mensageria utiliza mecanismos de controle para acompanhar o processamento das mensagens e identificar situações que exigem atenção.
