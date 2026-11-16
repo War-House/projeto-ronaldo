@@ -1,3 +1,57 @@
+# Mensageria
+
+## Objetivo
+
+A parte de mensageria do projeto WarHouse utiliza o RabbitMQ para realizar a comunicação entre diferentes partes do sistema por meio de eventos. O objetivo é permitir que determinadas ações, como a criação, o pagamento, o envio ou o cancelamento de um pedido, sejam comunicadas aos serviços responsáveis sem que todos precisem executar suas tarefas ao mesmo tempo.
+Dessa forma, quando um evento é publicado, os serviços interessados podem recebê-lo e realizar suas atividades de maneira independente e assíncrona.
+
+## Funcionamento da mensageria
+
+O sistema utiliza uma exchange do tipo `Topic`, chamada `warhouse.eventos`, responsável por receber os eventos publicados e encaminhá-los para as filas de acordo com os padrões de roteamento configurados.
+
+Cada fila possui uma finalidade específica. Assim, um mesmo evento pode ser recebido por diferentes consumidores, dependendo do tipo de informação que ele representa e da atividade que precisa ser executada.
+
+O projeto possui três consumidores principais: notificações, logística e auditoria.
+
+## Arquivos da mensageria
+
+O arquivo `comum.js` reúne funções compartilhadas pelos consumidores. Ele é responsável por centralizar a conexão com o RabbitMQ e disponibilizar recursos utilizados no processamento das mensagens.
+
+O arquivo `preparar-rabbitmq.js` realiza a configuração inicial da estrutura de mensageria. Ele cria as exchanges e filas necessárias e estabelece as ligações entre elas, definindo quais tipos de eventos devem ser encaminhados para cada consumidor.
+
+O arquivo `notificacoes.js` é responsável por receber eventos relacionados aos pedidos e simular o envio de notificações por e-mail. Dessa forma, quando um evento correspondente é recebido, o consumidor executa a ação de notificação.
+
+O arquivo `logistica.js` recebe eventos específicos relacionados ao andamento dos pedidos. Sua função é acompanhar as mudanças de situação, como criação, pagamento, envio e cancelamento, mantendo informações sobre as entregas. Esse arquivo também disponibiliza uma pequena interface HTTP local para consultar a saúde do serviço e as informações de uma entrega.
+
+O arquivo `auditoria.js` recebe todos os eventos publicados no sistema. Ele registra as informações recebidas em um arquivo de log, permitindo acompanhar o histórico das ações e manter um registro do que aconteceu durante o funcionamento da aplicação.
+
+O arquivo `provocar-falhas.js` é utilizado para testar o comportamento da mensageria diante de situações inesperadas. Ele publica eventos duplicados e mensagens em formato inválido, permitindo verificar como o sistema lida com essas ocorrências.
+
+Por fim, o arquivo `ver-filas.js` permite consultar informações sobre as filas do RabbitMQ e suas respectivas filas de mensagens não processadas, facilitando o acompanhamento do funcionamento da mensageria.
+
+## Tratamento de mensagens e falhas
+
+A mensageria utiliza mecanismos de controle para acompanhar o processamento das mensagens e identificar situações que exigem atenção.
+
+Entre esses recursos estão a confirmação de recebimento, o tratamento de erros e o controle de duplicidade. O sistema também utiliza identificadores de requisição para facilitar o rastreamento dos eventos e das mensagens durante a execução.
+
+Os detalhes sobre as estratégias de novas tentativas (Retry), o funcionamento das Dead Letter Queues (DLQ), a idempotência e os testes de falhas e duplicidade são apresentados na Parte 4 — Falha e Duplicidade.
+
+## Execução
+
+Para utilizar a mensageria, é necessário que o RabbitMQ esteja em execução e que as dependências do projeto estejam instaladas.
+
+Primeiramente, deve ser realizada a configuração das exchanges e filas. Em seguida, os consumidores podem ser iniciados individualmente, permitindo que cada um receba e processe os eventos destinados a ele.
+
+O projeto também disponibiliza recursos para provocar falhas e consultar o estado das filas, auxiliando na realização de testes e no acompanhamento do funcionamento do sistema.
+
+## Sobre a implementação
+
+A implementação da mensageria permite que o WarHouse realize o processamento de eventos de forma assíncrona e organizada. A separação das responsabilidades entre notificações, logística e auditoria facilita a manutenção do sistema e permite que cada consumidor execute sua função de maneira independente.
+
+Essa estrutura permite organizar a comunicação entre os diferentes serviços, facilitando a manutenção e o acompanhamento das atividades realizadas pela aplicação.
+
+
 # Parte 4 — Falha e Duplicidade | WarHouse
 
 ## 1. Objetivo
