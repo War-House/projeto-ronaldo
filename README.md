@@ -173,7 +173,7 @@ Limitações conhecidas: dados, outbox, contadores de limite e idempotência (no
 | Pasta | Conteúdo |
 |-------|----------|
 | `rest/` | Parte 1: `app.js` (rotas e regras), `eventos.js` (outbox + publicação), `cliente.js` (evidência), `test/` |
-| `mensageria/` | Parte 2: `comum.js` (topologia, DLQ, retry, idempotência), `notificacoes.js`, `logistica.js`, `auditoria.js`, `preparar-rabbitmq.js`, `provocar-falhas.js`, `ver-filas.js` | [Documentação detalhada](mensageria/README.md)
+| `mensageria/` | Parte 2: `comum.js` (topologia, DLQ, retry, idempotência), `notificacoes.js`, `logistica.js`, `auditoria.js`, `preparar-rabbitmq.js`, `provocar-falhas.js`, `ver-filas.js` | Documentação detalhada (mensageria/README.md)
 | `graphql/` | Parte 3: `schema.js`, `resolvers.js` (DataLoader), `rest.js` (cliente da API REST), `index.js` |
 | `gateway/` | Parte 4: `app.js` (filtros, disjuntor, agregação), `gateway.js`, `test/` |
 | `testes/` | Roteiros das cenas, `teste-gateway.js`, corpos `curl/` e `evidencias/` de uma execução |
