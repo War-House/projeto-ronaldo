@@ -5,6 +5,7 @@
 **Integrantes:** Ana Carolina Monteiro dos Santos · Ana Laura Amoroso do Vale · Gabriella Scattolin · Larissa Rodrigues · Maria Júlia Fernandes Capellato · Milena Vieira dos Santos · Sylvia Helena Galassini Santana
 
 - Repositório Git: **https://github.com/War-House/projeto-ronaldo**
+- Demonstração interface web para tratamento de falhas: **https://claude.ai/artifact/QHB1ZbcKyCbw167HbLVywj**
 
 
 ---
