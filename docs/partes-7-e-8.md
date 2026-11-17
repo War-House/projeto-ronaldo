@@ -1,4 +1,4 @@
-# 7. Rota agregada e degradação graciosa
+# 7. Rota agregada e degradação graciosa 
 
 A degradação graciosa é um conceito de arquitetura de software que permite que uma aplicação continue oferecendo suas funcionalidades principais, mesmo quando algum de seus componentes apresenta falhas ou fica temporariamente indisponível. Em vez de interromper todo o funcionamento do sistema, essa estratégia procura preservar os recursos que ainda podem ser utilizados, reduzindo os impactos causados pela falha.
 
@@ -32,17 +32,17 @@ Portanto, a rota agregada demonstra a aplicação da degradação graciosa no pr
 
 ### Evidências da execução
 
-**Evidência 1 — Funcionamento normal da rota agregada**
+***Evidência 1 — Funcionamento normal da rota agregada***
 
 <img width="589" height="697" alt="image" src="https://github.com/user-attachments/assets/7162c057-4084-4d55-9c13-580676054019" />
 
-*Figura 1 — Resposta completa da rota agregada, reunindo informações do pedido, dos jogos e da entrega em uma única requisição.*
+Figura 1 — Resposta completa da rota agregada, reunindo informações do pedido, dos jogos e da entrega em uma única requisição.
 
-**Evidência 2 — Funcionamento da rota agregada com indisponibilidade da Logística**
+***Evidência 2 — Funcionamento da rota agregada com indisponibilidade da Logística***
 
 <img width="532" height="498" alt="image" src="https://github.com/user-attachments/assets/c342a6db-cd72-4822-b5f7-04623785f3b4" />
 
-*Figura 2 — Resposta parcial da rota agregada durante a indisponibilidade do serviço de Logística, mantendo os dados principais do pedido disponíveis.*
+Figura 2 — Resposta parcial da rota agregada durante a indisponibilidade do serviço de Logística, mantendo os dados principais do pedido disponíveis.
 
 ## 7.3. Comportamento das mensagens durante falhas no RabbitMQ
 
@@ -68,9 +68,9 @@ A arquitetura do WarHouse foi organizada para dividir as responsabilidades do si
 
 O diagrama apresenta a comunicação entre os principais componentes do WarHouse, desde os sistemas que acessam a aplicação até os serviços responsáveis pelo processamento das operações.
 
-<!-- Insira aqui a imagem do diagrama geral da arquitetura. -->
+<img width="845" height="563" alt="image" src="https://github.com/user-attachments/assets/500dbd48-4bd4-4374-bc71-b6a53e66616f" />
 
-*Figura 3 — Diagrama geral da arquitetura do sistema WarHouse, apresentando seus componentes e os fluxos de comunicação síncrona e assíncrona.*
+Figura 3 — Diagrama geral da arquitetura do sistema WarHouse, apresentando seus componentes e os fluxos de comunicação síncrona e assíncrona.
 
 Na parte superior, estão representados três clientes: o aplicativo do cliente, o painel administrativo e a ludoteca parceira. Todos acessam o sistema por meio do API Gateway, que funciona como a única porta pública da aplicação. Ele recebe as requisições, identifica os clientes e aplica mecanismos de segurança e controle, como autenticação por chave de API, autorização por rota e limitação de requisições.
 
@@ -114,14 +114,14 @@ Esse mecanismo facilita a identificação de falhas, a investigação de comport
 
 ### Evidências da execução
 
-**Evidência 3 — Rastreamento da requisição entre os serviços por meio do X-Request-Id**
+***Evidência 3 — Rastreamento da requisição entre os serviços por meio do X-Request-Id***
 
-<!-- Insira aqui a imagem dos logs demonstrando o mesmo X-Request-Id entre os serviços. -->
+<img width="1144" height="90" alt="image" src="https://github.com/user-attachments/assets/f0fba069-9c6e-4f22-b1f1-eda753557bab" />
 
-*Figura 4 — Demonstração da propagação do mesmo X-Request-Id entre o Gateway, a API REST e os consumidores assíncronos, permitindo acompanhar uma requisição ao longo da arquitetura.*
+Figura 4 — Demonstração da propagação do mesmo X-Request-Id entre o Gateway, a API REST e os consumidores assíncronos, permitindo acompanhar uma requisição ao longo da arquitetura.
 
-**Evidência 4 — Registro do evento no serviço de auditoria**
+***Evidência 4 — Registro do evento no serviço de auditoria***
 
-<!-- Insira aqui a imagem do registro do evento no serviço de auditoria. -->
+<img width="2455" height="248" alt="image" src="https://github.com/user-attachments/assets/c2700ec3-5eb4-489c-8b37-459f4e58122d" />
 
-*Figura 5 — Registro do evento de criação do pedido no arquivo de auditoria, contendo o X-Request-Id utilizado para rastrear a requisição.*
+Figura 5 — Registro do evento de criação do pedido no arquivo de auditoria, contendo o X-Request-Id utilizado para rastrear a requisição.
